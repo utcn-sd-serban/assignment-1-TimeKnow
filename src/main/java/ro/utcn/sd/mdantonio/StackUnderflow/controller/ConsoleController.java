@@ -46,7 +46,7 @@ public class ConsoleController implements CommandLineRunner {
                 done = handleCommand(command);
 
             } catch (ObjectNotFoundExpection objectNotFoundExpection) {
-                print("The data you required was not found!");
+                print("The data you provided was not found!");
             }
             catch (BannedUserException e){
                 print("This account has been banned!");

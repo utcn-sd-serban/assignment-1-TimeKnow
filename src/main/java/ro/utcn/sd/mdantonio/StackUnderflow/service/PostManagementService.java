@@ -10,6 +10,8 @@ import ro.utcn.sd.mdantonio.StackUnderflow.exception.ObjectNotFoundExpection;
 import ro.utcn.sd.mdantonio.StackUnderflow.repository.API.PostRepository;
 import ro.utcn.sd.mdantonio.StackUnderflow.repository.API.RepositoryFactory;
 import ro.utcn.sd.mdantonio.StackUnderflow.repository.API.VoteRepository;
+
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,16 +27,21 @@ public class PostManagementService implements ManagementService {
         List<Post> questions =  repositoryFactory.createPostRepository().findAll().stream().
                 filter(x->x.getPosttypeid()==QUESTIONID).collect(Collectors.toList());
         questions.forEach(x->x.setScore(calculatePostScore(x)));
-        return questions.stream().sorted((x, y)->Long.compare(y.getScore(), x.getScore())).collect(Collectors.toList());
+        return questions.stream().sorted(Comparator.comparing(Post::getCreationDate,
+                Comparator.nullsLast(Comparator.reverseOrder()))).
+                sorted((x, y)->Long.compare(y.getScore(), x.getScore())).collect(Collectors.toList());
     }
 
     @Transactional
-    public List<Post> listQuestionResponses(int questionId){
+    public List<Post> listQuestionResponses(int questionId) throws ObjectNotFoundExpection{
         PostRepository postRepository = repositoryFactory.createPostRepository();
-        List<Post> answers = postRepository.findAll().stream().filter(x->x.getParentid().
-                equals(new Integer(questionId))).collect(Collectors.toList());
+        postRepository.findById(questionId).orElseThrow(ObjectNotFoundExpection::new);
+        List<Post> answers = postRepository.findAll().stream().filter(x->x.getParentid()!=null).
+                filter(x->x.getParentid().equals(questionId)).collect(Collectors.toList());
         answers.forEach(x->x.setScore(calculatePostScore(x)));
-        return answers.stream().sorted((x,y)->Long.compare(y.getScore(), x.getScore())).collect(Collectors.toList());
+        return answers.stream().sorted(Comparator.comparing(Post::getCreationDate,
+                Comparator.nullsLast(Comparator.reverseOrder()))).
+                sorted((x,y)->Long.compare(y.getScore(), x.getScore())).collect(Collectors.toList());
     }
 
     @Transactional
@@ -74,7 +81,8 @@ public class PostManagementService implements ManagementService {
     }
 
     @Transactional
-    public List<Post> listPostByTag(int tagId){
+    public List<Post> listPostByTag(int tagId) throws ObjectNotFoundExpection{
+        repositoryFactory.createTagRepository().findById(tagId).orElseThrow(ObjectNotFoundExpection::new);
         List<Integer> postIdList = repositoryFactory.createPostTagRepository().findAll().
                 stream().filter(x->x.getTagid()==tagId).map(PostTag::getPostid).collect(Collectors.toList());
         List<Post> postList = repositoryFactory.createPostRepository().findAll().stream().

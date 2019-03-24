@@ -5,6 +5,7 @@ import ro.utcn.sd.mdantonio.StackUnderflow.service.ManagementService;
 import ro.utcn.sd.mdantonio.StackUnderflow.service.TagManagementService;
 import ro.utcn.sd.mdantonio.StackUnderflow.service.UnderflowUserManagementService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -17,6 +18,15 @@ public class UnderflowUserCommandHandler implements CommandHandler{
             "unban user",
             "list all users"
     );
+
+    private static final List<String> helpDocumentation = Arrays.asList(
+            "Command to login to our website",
+            "Command to logout from our website",
+            "Ban a user [ADMIN]",
+            "Unban a user [ADMIN]",
+            "list all users [ADMIN]"
+    );
+
     private UnderflowUserManagementService managementService;
 
     public UnderflowUserCommandHandler(ManagementService managementService) {
@@ -46,7 +56,10 @@ public class UnderflowUserCommandHandler implements CommandHandler{
 
     @Override
     public List<String> getCommands() {
-        return commandList;
+        List<String> response = new ArrayList<>();
+        for(int i=0;i<commandList.size();i++)
+            response.add(commandList.get(i) + " : " +helpDocumentation.get(i));
+        return response;
     }
 
 

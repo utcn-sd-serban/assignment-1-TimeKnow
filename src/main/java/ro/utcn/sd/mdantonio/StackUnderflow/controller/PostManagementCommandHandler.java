@@ -5,10 +5,7 @@ import ro.utcn.sd.mdantonio.StackUnderflow.exception.InvalidCastException;
 import ro.utcn.sd.mdantonio.StackUnderflow.service.ManagementService;
 import ro.utcn.sd.mdantonio.StackUnderflow.service.PostManagementService;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static ro.utcn.sd.mdantonio.StackUnderflow.entities.StackUnderflowConstants.ANSWERID;
 import static ro.utcn.sd.mdantonio.StackUnderflow.entities.StackUnderflowConstants.QUESTIONID;
@@ -25,6 +22,19 @@ public class PostManagementCommandHandler implements CommandHandler{
             "delete post",
             "update post"
     );
+
+    private static final List<String> helpDocumentation = Arrays.asList(
+            "Displays the list of all Questions",
+            "Displays the Answers for a specific Question",
+            "Displays a list of Questions filtered by a Tag",
+            "Displays a list of Questions filtered by the Question Title",
+            "Post a Question to the website",
+            "Responds to a Question",
+            "Upvote or Downvote a Post",
+            "Deletes a Post",
+            "Update a Answer"
+    );
+
 
     private ManagementService managementService;
 
@@ -75,7 +85,10 @@ public class PostManagementCommandHandler implements CommandHandler{
 
     @Override
     public List<String> getCommands() {
-        return commandList;
+        List<String> response = new ArrayList<>();
+        for(int i=0;i<commandList.size();i++)
+            response.add(commandList.get(i) + " : " +helpDocumentation.get(i));
+        return response;
     }
 
     private void handleListQuestions(PostManagementService postManagementService, Scanner scanner){

@@ -5,6 +5,7 @@ import ro.utcn.sd.mdantonio.StackUnderflow.service.ManagementService;
 import ro.utcn.sd.mdantonio.StackUnderflow.service.PostManagementService;
 import ro.utcn.sd.mdantonio.StackUnderflow.service.TagManagementService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -15,6 +16,13 @@ public class TagManagementCommandHandler implements CommandHandler{
             "list all tags -filter question",
             "create tag",
             "attach tag"
+    );
+
+    private static final List<String> helpDocumentation = Arrays.asList(
+            "Displays a list of all the currently available Tags",
+            "Displays a list of Tags that were attached to a specific Question",
+            "Creates a Tag",
+            "Attaches a tag to a Question"
     );
 
     private ManagementService managementService;
@@ -50,7 +58,10 @@ public class TagManagementCommandHandler implements CommandHandler{
 
     @Override
     public List<String> getCommands() {
-        return commandList;
+        List<String> response = new ArrayList<>();
+        for(int i=0;i<commandList.size();i++)
+            response.add(commandList.get(i) + " : " +helpDocumentation.get(i));
+        return response;
     }
 
     private void handleListTags(TagManagementService tagManagementService){
